@@ -1,0 +1,8 @@
+### algo
+GET "http://localhost:1234/teams"
+
+### algo2
+GET "http://localhost:1234/players"
+
+### algo3
+GET "http://localhost:1234/playersCards"

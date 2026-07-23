@@ -1,0 +1,131 @@
+import mysql from "mysql2/promise";
+
+const config = {
+  host: "localhost",
+  user: "root",
+  port: 3306,
+  password: "",
+  database: "FootballStats",
+};
+
+const connection = await mysql.createConnection(config);
+
+export class playerModel {
+  // Obtener todos los jugadores con sus equipos
+  static async getAllPlayers() {
+    const [players] = await connection.query(`
+      SELECT 
+        p.*,
+        t.team_name AS team_name
+      FROM 
+        players p
+      JOIN 
+        teams t ON p.team_id = t.team_id;
+    `);
+    return players;
+  }
+
+  // Obtener información resumida de los jugadores
+ static async getCardPlayer(season, playerName) {
+    const params = [];
+    let whereClause = "";
+
+    if (season) {
+      whereClause = "WHERE pcs.season = ?";
+      params.push(season);
+    }
+
+    if (playerName) {
+      whereClause += whereClause ? " AND" : "WHERE";
+      whereClause += " p.surname LIKE ?";
+      params.push(`%${playerName}%`);
+    }
+
+    const [players] = await connection.query(
+      `
+      SELECT
+        p.player_id,
+        p.surname,
+        p.picture_url,
+        t.team_name,
+        p.national_team,
+        p.market_value,
+        SUM(pcs.goals)          AS total_goals,
+        SUM(pcs.assists)        AS total_assists,
+        SUM(pcs.matches_played) AS total_matches,
+        SUM(pcs.minutes_played) AS total_minutes,
+        SUM(pcs.yellow_cards)   AS total_yellow_cards,
+        SUM(pcs.red_cards)      AS total_red_cards
+      FROM
+        Player_Competition_Stats pcs
+      JOIN
+        players p ON pcs.player_id = p.player_id
+      JOIN
+        teams t ON p.team_id = t.team_id
+      ${whereClause}
+      GROUP BY
+        p.player_id,
+        p.surname,
+        p.picture_url,
+        t.team_name,
+        p.national_team
+      ORDER BY
+        t.team_name,
+        p.surname;
+      `,
+      params
+    );
+    return players;
+  }
+
+  // GET THE PLAYER BY ID
+  static async getPlayerById(playerId) {
+    const [player] = await connection.query(
+      `
+      SELECT 
+        p.*, 
+        t.team_name AS team_name, 
+        t.picture_url AS pictureTeam_url 
+      FROM 
+        players p 
+      JOIN 
+        teams t ON p.team_id = t.team_id
+      WHERE 
+        player_id = ?`,
+      [playerId],
+    );
+    return player[0];
+  }
+
+  // GET THE STATS BY PLAYER ID
+  static async getAllStatsSeparately(playerId, competitionType) {
+    const [stats] = await connection.query(
+      `
+     SELECT
+      p.player_id,
+      t.league_id,
+      l.name AS league_name,
+      l.picture_url AS league_logo,
+      pcs.competition_type,
+      pcs.goals,
+      pcs.assists,
+      pcs.yellow_cards,
+      pcs.red_cards,
+      pcs.matches_played,
+      pcs.minutes_played
+    FROM
+      players p
+    JOIN
+      Player_Competition_Stats pcs ON p.player_id = pcs.player_id
+    JOIN
+      teams t ON p.team_id = t.team_id
+    JOIN
+      leagues l ON t.league_id = l.league_id
+    WHERE
+      p.player_id = ? AND
+      pcs.competition_type = ?;`,
+      [playerId, competitionType],
+    );
+    return stats;
+  }
+}
