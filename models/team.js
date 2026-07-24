@@ -1,28 +1,18 @@
-import mysql from "mysql2/promise";
-
-const config = {
-  host: "localhost",
-  user: "root",
-  port: 3306,
-  password: "",
-  database: "FootballStats",
-};
-
-const connection = await mysql.createConnection(config);
+import { pool } from "../db.js";
 
 export class teamModel {
   static async getAllTeams() {
-    const [teams] = await connection.query("SELECT * FROM Teams");
+    const [teams] = await pool.query("SELECT * FROM Teams");
     return teams;
   }
 
   static async getLeagues() {
-    const [leagues] = await connection.query("SELECT * FROM Leagues");
+    const [leagues] = await pool.query("SELECT * FROM Leagues");
     return leagues;
   }
 
   static async getLeagueById(leagueId) {
-    const [league] = await connection.query(
+    const [league] = await pool.query(
       `SELECT * FROM Leagues WHERE league_id = ?`,
       [leagueId],
     );
@@ -30,7 +20,7 @@ export class teamModel {
   }
 
   static async getTableLeague(leagueId, season) {
-    const [table] = await connection.query(
+    const [table] = await pool.query(
       `SELECT 
       ts.*,
       t.team_name,
@@ -49,7 +39,7 @@ export class teamModel {
   }
 
   static async getTopPlayersLeague(leagueId, season) {
-    const [topPlayers] = await connection.query(
+    const [topPlayers] = await pool.query(
       `SELECT 
     p.player_id,
     p.surname,

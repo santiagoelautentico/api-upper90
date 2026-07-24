@@ -1,19 +1,9 @@
-import mysql from "mysql2/promise";
-
-const config = {
-  host: "localhost",
-  user: "root",
-  port: 3306,
-  password: "",
-  database: "FootballStats",
-};
-
-const connection = await mysql.createConnection(config);
+import { pool } from "../db.js";
 
 export class playerModel {
   // Obtener todos los jugadores con sus equipos
   static async getAllPlayers() {
-    const [players] = await connection.query(`
+    const [players] = await pool.query(`
       SELECT 
         p.*,
         t.team_name AS team_name
@@ -41,7 +31,7 @@ export class playerModel {
       params.push(`%${playerName}%`);
     }
 
-    const [players] = await connection.query(
+    const [players] = await pool.query(
       `
       SELECT
         p.player_id,
@@ -80,7 +70,7 @@ export class playerModel {
 
   // GET THE PLAYER BY ID
   static async getPlayerById(playerId) {
-    const [player] = await connection.query(
+    const [player] = await pool.query(
       `
       SELECT 
         p.*, 
@@ -99,7 +89,7 @@ export class playerModel {
 
   // GET THE STATS BY PLAYER ID
   static async getAllStatsSeparately(playerId, competitionType) {
-    const [stats] = await connection.query(
+    const [stats] = await pool.query(
       `
      SELECT
       p.player_id,
