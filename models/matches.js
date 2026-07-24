@@ -18,7 +18,7 @@ export class MatchesModel {
       at.team_name AS awayTeamName,
       at.team_id AS awayTeamId,
       at.picture_url AS awayTeamLogo
-    FROM Matches AS m
+    FROM matches AS m
     INNER JOIN Teams AS ht ON m.home_team_id = ht.team_id
     INNER JOIN Teams AS at ON m.away_team_id = at.team_id
     INNER JOIN Leagues AS l ON m.league_id = l.league_id
@@ -56,7 +56,7 @@ export class MatchesModel {
             at.team_name AS awayTeamName,
             at.team_id AS awayTeamId,
             at.picture_url AS awayTeamLogo
-        FROM Matches AS m
+        FROM matches AS m
         INNER JOIN Teams AS ht ON m.home_team_id = ht.team_id
         INNER JOIN Teams AS at ON m.away_team_id = at.team_id
         INNER JOIN Leagues AS l ON m.league_id = l.league_id

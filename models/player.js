@@ -8,15 +8,15 @@ export class playerModel {
         p.*,
         t.team_name AS team_name
       FROM 
-        players p
+        Players p
       JOIN 
-        teams t ON p.team_id = t.team_id;
+        Teams t ON p.team_id = t.team_id;
     `);
     return players;
   }
 
   // Obtener información resumida de los jugadores
- static async getCardPlayer(season, playerName) {
+  static async getCardPlayer(season, playerName) {
     const params = [];
     let whereClause = "";
 
@@ -47,11 +47,11 @@ export class playerModel {
         SUM(pcs.yellow_cards)   AS total_yellow_cards,
         SUM(pcs.red_cards)      AS total_red_cards
       FROM
-        Player_Competition_Stats pcs
+        player_competition_stats pcs
       JOIN
-        players p ON pcs.player_id = p.player_id
+        Players p ON pcs.player_id = p.player_id
       JOIN
-        teams t ON p.team_id = t.team_id
+        Teams t ON p.team_id = t.team_id
       ${whereClause}
       GROUP BY
         p.player_id,
@@ -77,9 +77,9 @@ export class playerModel {
         t.team_name AS team_name, 
         t.picture_url AS pictureTeam_url 
       FROM 
-        players p 
+        Players p 
       JOIN 
-        teams t ON p.team_id = t.team_id
+        Teams t ON p.team_id = t.team_id
       WHERE 
         player_id = ?`,
       [playerId],
@@ -104,13 +104,13 @@ export class playerModel {
       pcs.matches_played,
       pcs.minutes_played
     FROM
-      players p
+      Players p
     JOIN
-      Player_Competition_Stats pcs ON p.player_id = pcs.player_id
+      player_competition_stats pcs ON p.player_id = pcs.player_id
     JOIN
-      teams t ON p.team_id = t.team_id
+      Teams t ON p.team_id = t.team_id
     JOIN
-      leagues l ON t.league_id = l.league_id
+      Leagues l ON t.league_id = l.league_id
     WHERE
       p.player_id = ? AND
       pcs.competition_type = ?;`,

@@ -48,7 +48,7 @@ export class teamModel {
     pcs.assists,
     pcs.clean_sheets
     FROM 
-    Player_Competition_Stats pcs
+    player_competition_stats pcs
     JOIN 
     Players p ON pcs.player_id = p.player_id
     WHERE 
