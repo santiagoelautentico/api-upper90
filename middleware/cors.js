@@ -4,7 +4,7 @@ const ACCEPTED_ORIGINS = [
   "http://localhost:8080",
   "http://localhost:1234",
   "http://localhost:5173",
-  "https://upper90-production-065a.up.railway.app/", // 👈 reemplazá esto por tu dominio real
+  "https://upper90-production-065a.up.railway.app",
 ];
 
 export const corsMiddelware = ({ acceptedOrigins = ACCEPTED_ORIGINS } = {}) => {
