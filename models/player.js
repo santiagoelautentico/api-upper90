@@ -63,7 +63,7 @@ export class playerModel {
         t.team_name,
         p.surname;
       `,
-      params
+      params,
     );
     return players;
   }
@@ -88,7 +88,7 @@ export class playerModel {
   }
 
   // GET THE STATS BY PLAYER ID
-  static async getAllStatsSeparately(playerId, competitionType) {
+  static async getAllStatsSeparately(playerId, competitionType, season) {
     const [stats] = await pool.query(
       `
      SELECT
@@ -97,6 +97,7 @@ export class playerModel {
       l.name AS league_name,
       l.picture_url AS league_logo,
       pcs.competition_type,
+      pcs.season,
       pcs.goals,
       pcs.assists,
       pcs.yellow_cards,
@@ -113,8 +114,9 @@ export class playerModel {
       Leagues l ON t.league_id = l.league_id
     WHERE
       p.player_id = ? AND
+      pcs.season = ? AND
       pcs.competition_type = ?;`,
-      [playerId, competitionType],
+      [playerId, season, competitionType], // ← orden corregido
     );
     return stats;
   }

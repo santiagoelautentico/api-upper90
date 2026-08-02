@@ -30,9 +30,11 @@ export class PlayerController {
   static async getAllStatsSeparately(req, res) {
     const playerId = req.params.id;
     const competitionType = req.params.competitionType;
+    const season = req.query.season;
     const stats = await playerModel.getAllStatsSeparately(
       playerId,
       competitionType,
+      season,
     );
     if (stats) {
       res.json(stats);

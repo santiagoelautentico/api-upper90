@@ -29,13 +29,13 @@ export class MatchesController {
     const matchId = req.params.matchId;
     const team_id = req.params.team_id;
     const stats = await MatchesModel.getMatchStatsByMatchId(matchId, team_id);
-    if (stats) {
+
+    if (stats && stats.length > 0) {
       res.json(stats);
     } else {
       res.status(404).json({ message: "Stats not found" });
     }
   }
 }
-
 
 // try try
